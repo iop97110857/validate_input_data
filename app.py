@@ -1,4 +1,3 @@
-
 from flask import Flask, request, render_template
 import re
 
@@ -16,30 +15,34 @@ def handle_form():
     email = request.form.get('email')
 
     # Validate ID number (assuming 台灣ID)
-    if len(id_number)!=10:
+    if len(id_number) != 10:
         return "身分證號碼應該為10碼", 400
-    if not id_number[0].isalpha():
-        return "第一個字元應該為英文字母碼", 400        
-    if len(id_number)!=10:
-        return "身分證號碼應該為10碼", 400
-    if len(id_number)!=10:
-        return "身分證號碼應該為10碼", 400
-    if len(id_number)!=10:
-        return "身分證號碼應該為10碼", 400        
-    if len(id_number)!=10:
-        return "身分證號碼應該為10碼", 400
-    if len(id_number)!=10:
-        return "身分證號碼應該為10碼", 400
-    if len(id_number)!=10:
-        return "身分證號碼應該為10碼", 400        
-    if len(id_number)!=10:
-        return "身分證號碼應該為10碼", 400
-
-
-
-
-
+    first_char = id_number[0]
+    if not first_char.isalpha():
+        return "第一個字元應該為英文字母碼", 400
+    if not id_number[1:].isdigit():
+        return "後9個字元應該為數字", 400
     
+    # Convert first character to corresponding number
+    if first_char.isupper():  # Ensure it's an uppercase letter
+        first_digit = ord(first_char) - ord('A') + 10
+    else:
+        return "第一個字元應該為大寫英文字母", 400
+    
+    # Calculate sum of products of digits and weights
+    sum_products = first_digit * 1
+    for i in range(2, 10):
+        digit = int(id_number[i - 1])
+        weight = 10 - i + 1
+        sum_products += digit * weight
+    
+    # Add the last digit
+    sum_products += int(id_number[9])
+
+    # Check if the sum modulo 10 equals to 0
+    if sum_products % 10 != 0:
+        return "身分證號碼檢查碼錯誤", 400
+
     # Validate name (assuming it's alphabetic)
     if not re.match(r'^[A-Za-z\s]+$', name):
         return "Invalid name", 400
