@@ -24,21 +24,17 @@ def handle_form():
         return "後9個字元應該為數字", 400
     
     # Convert first character to corresponding number
-    if first_char.isupper():  # Ensure it's an uppercase letter
-        first_digit = ord(first_char) - ord('A') + 10
-    else:
+    if not first_char.isupper():  # Ensure it's an uppercase letter
         return "第一個字元應該為大寫英文字母", 400
+    first_digit = ord(first_char) - ord('A') + 10
     
     # Calculate sum of products of digits and weights
     sum_products = first_digit * 1
-    for i in range(2, 10):
+    for i in range(2, 11):
         digit = int(id_number[i - 1])
-        weight = 10 - i + 1
+        weight = 10 - i + 2
         sum_products += digit * weight
     
-    # Add the last digit
-    sum_products += int(id_number[9])
-
     # Check if the sum modulo 10 equals to 0
     if sum_products % 10 != 0:
         return "身分證號碼檢查碼錯誤", 400
